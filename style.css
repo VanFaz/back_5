@@ -1,49 +1,67 @@
 body {
     width: 100%;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
 }
 
 header {
     background-color: #76006c;
     position: relative;
     width: 100%;
+    display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding: 10px 0;
 }
 
 img.logo {
     height: 100px;
     width: 100px;
     border-radius: 100px;
+    margin-left: 20px;
 }
 
 nav.menu {
     background-color: rgb(120, 120, 120);
     border: 1px solid rgb(180, 180, 180);
     width: 100%;
+    padding: 10px 0;
 }
 
-div.hiper, div.forma, div.tabl {
+div.hiper, div.forma, div.tabl, .login-container {
     width: 100%;
     max-width: 960px;
     background-color: #f2f2f2;
-    max-width: 96%;
+    margin: 20px auto;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 div.hiper {
     border: 10px groove black;
-    order:1;
+    order: 1;
 }
 
 div.forma {
     border: 10px groove rgb(0, 7, 112);
-    order:2;
+    order: 2;
     text-align: center;
 }
 
 div.tabl {
     border: 10px groove rgb(112, 0, 62);
-    order:0;
+    order: 0;
+}
+
+.login-container {
+    border: 10px groove rgb(0, 7, 112);
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    text-align: center;
 }
 
 table {
@@ -61,21 +79,80 @@ table td, table th {
 
 table tr:nth-child(even) {
     background-color: #a80081;
+    color: white;
 }
 
 table tr:nth-child(odd) {
     background-color: #ff45e6;
+    color: white;
 }
 
-#important{
+#important {
     text-align: center;
-    order:3;
+    order: 3;
 }
 
 footer {
     background-color: rgb(176, 0, 115);
     width: 100%;
     text-align: center;
+    padding: 20px 0;
+    color: white;
+}
+
+/* Стили для формы входа */
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.login-form button {
+    background-color: #76006c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-form button:hover {
+    background-color: #5a0053;
+}
+
+/* Стили для сообщений */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }
 
 /* Стили для ошибок формы */
@@ -154,10 +231,10 @@ footer {
     }
 
     div.hiper {
-        order:0;
+        order: 0;
     }
     
     div.forma {
-        order:1;
+        order: 1;
     }
 }
