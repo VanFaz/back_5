@@ -3,27 +3,6 @@ session_start();
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Проверка существования таблицы applications с нужными полями
-    try {
-        $pdo->exec("
-            CREATE TABLE IF NOT EXISTS applications (
-                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                login VARCHAR(50) UNIQUE,
-                pass_hash VARCHAR(255),
-                name VARCHAR(150) NOT NULL,
-                phone VARCHAR(20) NOT NULL,
-                email VARCHAR(100) NOT NULL,
-                birthdate DATE NOT NULL,
-                gender ENUM('male','female') NOT NULL,
-                bio TEXT,
-                contract_accepted BOOLEAN NOT NULL DEFAULT FALSE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB
-        ");
-    } catch (PDOException $e) {
-        die("Ошибка создания таблицы: " . $e->getMessage());
-    }
-
     $validation_rules = [
         'name' => [
             'pattern' => '/^[a-zA-Zа-яА-ЯёЁ\s]{1,150}$/u',
@@ -42,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'message' => 'Дата должна быть в формате ГГГГ-ММ-ДД'
         ],
         'gender' => [
-            'pattern' => '/^(male|female)$/',
+            'pattern' => '/^(male|female|other)$/',
             'message' => 'Выберите пол из предложенных вариантов'
         ],
         'languages' => [
@@ -95,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     try {
+        $pdo->beginTransaction();
+        
         // Подготовка данных для сохранения
         $db_data = [
             'name' => $data['name'],
@@ -108,17 +89,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!empty($_SESSION['login'])) {
             // Обновление существующей записи
-            $db_data['id'] = $_SESSION['uid'];
             $stmt = $pdo->prepare("UPDATE applications SET 
                 name = :name, phone = :phone, email = :email, 
                 birthdate = :birthdate, gender = :gender, 
                 bio = :bio, contract_accepted = :contract_accepted 
-                WHERE id = :id");
+                WHERE login = :login");
+                
+            $db_data['login'] = $_SESSION['login'];
             $stmt->execute($db_data);
+            
+            // Получаем ID приложения для обновления языков
+            $stmt = $pdo->prepare("SELECT id FROM applications WHERE login = ?");
+            $stmt->execute([$_SESSION['login']]);
+            $app_id = $stmt->fetchColumn();
             
             // Удаляем старые языки
             $pdo->prepare("DELETE FROM application_languages WHERE application_id = ?")
-                ->execute([$_SESSION['uid']]);
+                ->execute([$app_id]);
         } else {
             // Создание новой записи
             $login = uniqid('user_');
@@ -139,7 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         // Добавляем выбранные языки
-        $app_id = $_SESSION['uid'] ?? $app_id;
         $lang_stmt = $pdo->prepare("INSERT INTO application_languages (application_id, language_id) 
             SELECT ?, id FROM languages WHERE name = ?");
         
@@ -147,10 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $lang_stmt->execute([$app_id, $lang]);
         }
         
+        $pdo->commit();
+        
         setcookie('save', '1', time() + 24 * 60 * 60);
         header('Location: index.php?success=1');
         exit();
     } catch (PDOException $e) {
+        $pdo->rollBack();
         die("Ошибка сохранения данных: " . $e->getMessage());
     }
 }
