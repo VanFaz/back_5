@@ -1,0 +1,163 @@
+body {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #76006c;
+    position: relative;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+img.logo {
+    height: 100px;
+    width: 100px;
+    border-radius: 100px;
+}
+
+nav.menu {
+    background-color: rgb(120, 120, 120);
+    border: 1px solid rgb(180, 180, 180);
+    width: 100%;
+}
+
+div.hiper, div.forma, div.tabl {
+    width: 100%;
+    max-width: 960px;
+    background-color: #f2f2f2;
+    max-width: 96%;
+}
+
+div.hiper {
+    border: 10px groove black;
+    order:1;
+}
+
+div.forma {
+    border: 10px groove rgb(0, 7, 112);
+    order:2;
+    text-align: center;
+}
+
+div.tabl {
+    border: 10px groove rgb(112, 0, 62);
+    order:0;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+table td, table th {
+    border: 1px solid #ff4ef3;
+    padding: 5px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+table tr:nth-child(even) {
+    background-color: #a80081;
+}
+
+table tr:nth-child(odd) {
+    background-color: #ff45e6;
+}
+
+#important{
+    text-align: center;
+    order:3;
+}
+
+footer {
+    background-color: rgb(176, 0, 115);
+    width: 100%;
+    text-align: center;
+}
+
+/* Стили для ошибок формы */
+.error-list {
+    color: #ff0000;
+    background-color: #ffeeee;
+    border: 1px solid #ff0000;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.error-list h3 {
+    margin-top: 0;
+    color: #ff0000;
+}
+
+.error-list ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.error-field {
+    border-color: #ff0000 !important;
+    background-color: #ffeeee !important;
+}
+
+.success-message {
+    color: #008000;
+    background-color: #eeffee;
+    border: 1px solid #008000;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+/* Стили для формы */
+.forma label {
+    display: block;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.forma input[type="text"],
+.forma input[type="tel"],
+.forma input[type="email"],
+.forma input[type="date"],
+.forma textarea,
+.forma select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.forma textarea {
+    height: 100px;
+}
+
+.forma input[type="submit"] {
+    margin-top: 15px;
+    padding: 10px 20px;
+}
+
+@media (min-width: 768px) {
+    div.hiper, div.forma, div.tabl {
+        max-width: 960px;
+    }
+
+    div.hiper {
+        order:0;
+    }
+    
+    div.forma {
+        order:1;
+    }
+}
