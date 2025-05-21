@@ -49,264 +49,297 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
     }
 }
-
-// Вспомогательные функции для формы
-function getFieldValue($field) {
-    global $values;
-    return $values[$field] ?? '';
-}
-
-function isSelected($field, $value) {
-    global $values;
-    if ($field === 'gender') {
-        return (isset($values[$field]) && $values[$field] === $value) ? 'checked' : '';
-    }
-    return '';
-}
-
-function isChecked($field) {
-    global $values;
-    return (isset($values[$field]) ? 'checked' : '';
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Иванов Иван 4 задание</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</head>
+    <link rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Иванов Иван 4 задание</title>
+      <link href="style.css" rel="stylesheet" type="text/css">
+  </head>
 
-<body class="d-flex flex-column align-items-center">
+  <body class="d-flex flex-column align-items-center">
     <header class="container-fluid">
         <div class="row row-cols-1 row-cols-md-2 justify-content-center justify-content-md-between">
             <div class="header-case m-0 ms-md-1 col-md-auto d-flex align-items-center justify-content-center m-3">
-                <img src="image.jpg" alt="Логотип сайта" id="logo" class="img-fluid" style="max-width: 150px;">
-                <h1 class="h3">WINTER ARC</h1>
-            </div>
-            <?php if (!empty($_SESSION['login'])): ?>
-                <div class="col-md-auto d-flex align-items-center justify-content-center m-3">
-                    <span class="text-white mr-3">Вы вошли как: <?= htmlspecialchars($_SESSION['login']) ?></span>
-                    <a href="logout.php" class="btn btn-danger">Выйти</a>
-                </div>
-            <?php endif; ?>
+            <img src="image.jpg" alt="Логотип сайта" id="logo" class="img-fluid" style="max-width: 150px;">
+            <h1 class="h3">WINTER ARC</h1>
+        </div>
         </div>
         <nav class="menu bg-dark py-3">
             <div class="container">
                 <ul class="nav justify-content-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="#hiper">Ссылки</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#tabl">Таблица</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#forma">Форма</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#section2">Ссылочка 1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#section3">Ссылочка 2</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#section4">Ссылочка 3</a>
+                    </li>
                 </ul>
             </div>
         </nav>
-    </header>
+    
+</header>
 
-    <div class="content d-flex flex-column w-100">
-        <!-- Сообщения системы -->
-        <?php if (!empty($messages)): ?>
-            <div class="alert-container m-2 m-md-3">
+    <div class="content d-flex flex-column">
+        <div class="hiper m-2 p-2 m-md-3" id="hiper">
+            <ul>
+                <li class="list-group-item"><a href="http://kubsu.ru">1. Ссылка на главную страницу kubsu.ru (HTTP)</a></li>
+                <li class="list-group-item"><a href="https://kubsu.ru">2. Ссылка на главную страницу kubsu.ru (HTTPS)</a></li>
+                <li class="list-group-item"><a href="https://www.example.com"><img src="pic.jpg" alt="3. Ссылка-изображение" width = "200"></a></li>
+                <li class="list-group-item"><a href="/about">4. Сокращенная ссылка на внутреннюю страницу</a></li>
+                <li class="list-group-item"><a href="/">5. Сокращенная ссылка на главную страницу</a></li>
+                <li class="list-group-item"><a href="#section1">6. Ссылка на фрагмент текущей страницы</a></li>
+                <li class="list-group-item"><a href="https://youtu.be/d5IMLOR-bRo?si=-VU-9fB2x6fkUmpT">7. Ссылка с тремя параметрами</a></li>
+                <li class="list-group-item"><a href="https://vk.com/id145294955">8. Ссылка с параметром id</a></li>
+                <li class="list-group-item"><a href="./page.html">9. Относительная ссылка на страницу в текущем каталоге</a></li>
+                <li class="list-group-item"><a href="about/page.html">10. Относительная ссылка на страницу в каталоге about</a></li>
+                <li class="list-group-item"><a href="../page1.html">11. Относительная ссылка на страницу уровнем выше</a></li>
+                <li class="list-group-item"><a href="../../page2.html">12. Относительная ссылка на страницу двумя уровнями выше</a></li>
+                <li class="list-group-item"><p>13. Это <a href="https://www.wikipedia.org"> контекстная ссылка</a> в тексте абзаца.</p></li>
+                <li class="list-group-item"><a href="https://ru.wikipedia.org/wiki/%D0%9A%D1%83%D0%B1%D0%B0%D0%BD%D1%81%D0%BA%D0%B8%D0%B9_%D0%B3%D0%BE%D1%81%D1%83%D0%B4%D0%B0%D1%80%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D1%83%D0%BD%D0%B8%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%82%D0%B5%D1%82#%D0%A0%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D1%8B">14. Ссылка на фрагмент страницы стороннего сайта</a></li>
+                <li class="list-group-item">
+                    <img src="pic.jpg" width = "300" usemap="#imagemap" alt="чета">
+                    <map name="imagemap">
+                        <area shape="rect" coords="0,0,50,50" href="https://www.youtube.com" alt="Прямоугольная область">
+                        <area shape="circle" coords="150,150,50" href="https://www.twitch.tv" alt="Круглая область">
+                    </map>
+                </li>
+        
+                <li class="list-group-item"><a href="">16. Ссылка с пустым href</a></li>
+        
+                <li class="list-group-item"><a>17. Ссылка без href</a></li>
+        
+                <li class="list-group-item"><a href="https://www.apple.com" rel="nofollow">18. Ссылка, по которой запрещен переход поисковикам</a></li>
+        
+                <li class="list-group-item"><a href="https://translate.google.com/" rel="noindex">19. Не индексируемая ссылка</a></li>
+                
+                <li class="list-group-item">
+                    <ol>
+                        <li><a href="https://github.com/" title="=)">Первая ссылка</a></li>
+                        <li><a href="https://mail.ru/" title="Mail почта">Вторая ссылка</a></li>
+                    </ol>
+                </li>
+        
+                <li class="list-group-item"><a href="ftp://username:password@ftp.example.com/file.txt">21. Ссылка на файл на сервере FTP</a></li>
+            </ul>
+        </div>
+        <div class="tabl m-2 p-2 m-md-3" id="tabl">
+            <h2>Таблица с данными</h2>
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+            <tr>
+                <th>RADDAN</th>
+                <th>Ame</th>
+                <th>Pure</th>
+                <th>dyrachyo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Morphling</td>
+                <td>Luna</td>
+                <td>Alchemist</td>
+                <td>Phantom Assassin</td>
+            </tr>
+            <tr>
+                <td colspan="2">Главные конкуренты Tier 1</td>
+                <td>Tier 2</td>
+                <td>Tier 3</td>
+            </tr>
+            <tr>
+                <td>twice TI winner</td>
+                <td>several times 2nd</td>
+                <td>once 2nd</td>
+                <td>twice 2nd</td>
+            </tr>
+            <tr>
+                <td>Team Spirit</td>
+                <td>Xtreme Gaming</td>
+                <td>Tundra Esport</td>
+                <td>Gaimin Gladiators</td>
+            </tr>
+            <tr>
+                <td>Ukraine</td>
+                <td>China</td>
+                <td>Russia</td>
+                <td>Russia</td>
+            </tr>
+            <tr>
+                <td>age 21</td>
+                <td>age 27</td>
+                <td>age 20</td>
+                <td>age 23</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+        <div class="forma m-2 p-2 m-md-3" id="forma">
+         <h1>Форма</h1>
+              <?php if (!empty($messages)): ?>
+            <div class="mb-3">
                 <?php foreach ($messages as $message): ?>
                     <div class="alert alert-info"><?= $message ?></div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-        <!-- Блок с гиперссылками -->
-        <div class="hiper m-2 p-2 m-md-3" id="hiper">
-            <h2 class="text-center mb-4">Примеры гиперссылок</h2>
-            <ul class="list-group">
-                <!-- Ваши ссылки остаются без изменений -->
-                <li class="list-group-item"><a href="http://kubsu.ru">1. Ссылка на главную страницу kubsu.ru (HTTP)</a></li>
-                <li class="list-group-item"><a href="https://kubsu.ru">2. Ссылка на главную страницу kubsu.ru (HTTPS)</a></li>
-                <!-- ... остальные ссылки ... -->
-            </ul>
-        </div>
-
-        <!-- Блок с таблицей -->
-        <div class="tabl m-2 p-2 m-md-3" id="tabl">
-            <h2 class="text-center mb-4">Таблица с данными</h2>
-            <table class="table table-bordered table-striped">
-                <!-- Ваша таблица остается без изменений -->
-                <thead class="table-light">
-                    <tr>
-                        <th>RADDAN</th>
-                        <th>Ame</th>
-                        <th>Pure</th>
-                        <th>dyrachyo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- ... строки таблицы ... -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Блок с формой -->
-        <div class="forma m-2 p-2 m-md-3" id="forma">
-            <h1 class="text-center mb-4">Форма</h1>
-            
-            <?php 
-            $has_errors = false;
-            foreach ($errors as $error) {
-                if (!empty($error)) {
-                    $has_errors = true;
-                    break;
-                }
+        
+        <?php 
+        $has_errors = false;
+        foreach ($errors as $error) {
+            if (!empty($error)) {
+                $has_errors = true;
+                break;
             }
-            ?>
+        }
+        ?>
+        
+        <?php if ($has_errors): ?>
+            <div class="alert alert-danger mb-3">
+                <h4>Обнаружены ошибки:</h4>
+                <ul class="mb-0">
+                    <?php foreach ($errors as $field => $error): ?>
+                        <?php if (!empty($error)): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
             
-            <?php if ($has_errors): ?>
-                <div class="alert alert-danger mb-4">
-                    <h4 class="alert-heading">Обнаружены ошибки:</h4>
-                    <ul class="mb-0">
-                        <?php foreach ($errors as $field => $error): ?>
-                            <?php if (!empty($error)): ?>
-                                <li><?= htmlspecialchars($error) ?></li>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-            
-            <form action="submit.php" method="POST" class="needs-validation" novalidate>
+            <form action="submit.php" method="POST">
                 <!-- ФИО -->
-                <div class="form-group">
-                    <label for="name">ФИО:</label>
-                    <input type="text" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" 
-                           id="name" name="name" placeholder="Иванов Иван Иванович" required
-                           value="<?= htmlspecialchars(getFieldValue('name')) ?>">
+                <label for="name">
+                    ФИО:<br>
+                    <input id="name" name="name" placeholder="Иванов Иван Иванович" required
+                           value="<?php echo htmlspecialchars(getFieldValue('name')); ?>"
+                           class="<?php echo isset($errors['name']) ? 'error-field' : ''; ?>">
                     <?php if (isset($errors['name'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['name']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['name']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
                 
                 <!-- Телефон -->
-                <div class="form-group">
-                    <label for="phone">Телефон:</label>
-                    <input type="tel" class="form-control <?= isset($errors['phone']) ? 'is-invalid' : '' ?>" 
-                           id="phone" name="phone" placeholder="+7 (918) 123-45-67" required
-                           value="<?= htmlspecialchars(getFieldValue('phone')) ?>">
+                <label for="phone">
+                    Телефон:<br>
+                    <input id="phone" type="tel" name="phone" placeholder="+7 (918) 123-45-67" required
+                           value="<?php echo htmlspecialchars(getFieldValue('phone')); ?>"
+                           class="<?php echo isset($errors['phone']) ? 'error-field' : ''; ?>">
                     <?php if (isset($errors['phone'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['phone']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['phone']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
                 
                 <!-- Email -->
-                <div class="form-group">
-                    <label for="email">Электронная почта:</label>
-                    <input type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" 
-                           id="email" name="email" placeholder="ogurec@example.com" required
-                           value="<?= htmlspecialchars(getFieldValue('email')) ?>">
+                <label for="email">
+                    Электронная почта:<br>
+                    <input id="email" name="email" type="email" placeholder="ogurec@example.com" required
+                           value="<?php echo htmlspecialchars(getFieldValue('email')); ?>"
+                           class="<?php echo isset($errors['email']) ? 'error-field' : ''; ?>">
                     <?php if (isset($errors['email'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['email']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['email']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
                 
                 <!-- Дата рождения -->
-                <div class="form-group">
-                    <label for="birthdate">Дата рождения:</label>
-                    <input type="date" class="form-control <?= isset($errors['birthdate']) ? 'is-invalid' : '' ?>" 
-                           id="birthdate" name="birthdate" required
-                           value="<?= htmlspecialchars(getFieldValue('birthdate')) ?>">
+                <label for="birthdate">
+                    Дата рождения:<br>
+                    <input id="birthdate" name="birthdate" type="date" required
+                           value="<?php echo htmlspecialchars(getFieldValue('birthdate')); ?>"
+                           class="<?php echo isset($errors['birthdate']) ? 'error-field' : ''; ?>">
                     <?php if (isset($errors['birthdate'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['birthdate']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['birthdate']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
 
                 <!-- Пол -->
-                <div class="form-group">
-                    <label>Выберите пол:</label>
-                    <div class="form-check <?= isset($errors['gender']) ? 'is-invalid' : '' ?>">
-                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" required
-                               <?= isSelected('gender', 'male') ?>>
-                        <label class="form-check-label" for="male">Мужской</label>
-                    </div>
-                    <div class="form-check <?= isset($errors['gender']) ? 'is-invalid' : '' ?>">
-                        <input class="form-check-input" type="radio" name="gender" id="female" value="female"
-                               <?= isSelected('gender', 'female') ?>>
-                        <label class="form-check-label" for="female">Женский</label>
-                        <?php if (isset($errors['gender'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['gender']) ?></div>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <div>
+                    Выберите пол:<br>
+                    <label for="male">
+                        <input id="male" type="radio" name="gender" value="male" required
+                               <?php echo isSelected('gender', 'male'); ?>
+                               class="<?php echo isset($errors['gender']) ? 'error-field' : ''; ?>"> Мужской
+                    </label><br>
+                    <label for="female">
+                        <input id="female" type="radio" name="gender" value="female"
+                               <?php echo isSelected('gender', 'female'); ?>
+                               class="<?php echo isset($errors['gender']) ? 'error-field' : ''; ?>"> Женский
+                    </label><br>
+                    <?php if (isset($errors['gender'])): ?>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['gender']); ?></div>
+                    <?php endif; ?>
+                </div><br>
 
                 <!-- Языки программирования -->
-                <div class="form-group">
-                    <label for="languages">Любимый язык программирования:</label>
-                    <select class="form-control <?= isset($errors['languages']) ? 'is-invalid' : '' ?>" 
-                            id="languages" name="languages[]" multiple required size="5">
+                <label for="languages">
+                    Любимый язык программирования:<br>
+                    <select id="languages" name="languages[]" multiple="multiple" required
+                            class="<?php echo isset($errors['languages']) ? 'error-field' : ''; ?>" size="5">
                         <?php 
                         $allLanguages = ['Pascal', 'C', 'C++', 'JavaScript', 'PHP', 'Python', 'Java', 'Haskell', 'Clojure', 'Prolog', 'Scala'];
                         foreach ($allLanguages as $lang): ?>
-                            <option value="<?= htmlspecialchars($lang) ?>"
-                                <?= in_array($lang, $values['languages'] ?? []) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($lang) ?>
+                            <option value="<?php echo htmlspecialchars($lang); ?>"
+                                <?php echo isSelected('languages', $lang); ?>>
+                                <?php echo htmlspecialchars($lang); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                     <?php if (isset($errors['languages'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['languages']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['languages']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
 
                 <!-- Биография -->
-                <div class="form-group">
-                    <label for="bio">Биография:</label>
-                    <textarea class="form-control <?= isset($errors['bio']) ? 'is-invalid' : '' ?>" 
-                              id="bio" name="bio" rows="5" placeholder="Ваша биография" required><?= 
-                              htmlspecialchars(getFieldValue('bio')) ?></textarea>
+                <label for="bio">
+                    Биография:<br>
+                    <textarea id="bio" name="bio" placeholder="Ваша биография" required
+                              class="<?php echo isset($errors['bio']) ? 'error-field' : ''; ?>"><?php 
+                              echo htmlspecialchars(getFieldValue('bio')); ?></textarea>
                     <?php if (isset($errors['bio'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['bio']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['bio']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
 
                 <!-- Чекбокс контракта -->
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input <?= isset($errors['contract_accepted']) ? 'is-invalid' : '' ?>" 
-                           id="contract_accepted" name="contract_accepted" value="1" required
-                           <?= isChecked('contract_accepted') ?>>
-                    <label class="form-check-label" for="contract_accepted">С контрактом ознакомлен(а)</label>
+                <label for="contract_accepted">
+                    <input id="contract_accepted" type="checkbox" name="contract_accepted" value="1" required
+                           <?php echo isChecked('contract_accepted'); ?>
+                           class="<?php echo isset($errors['contract_accepted']) ? 'error-field' : ''; ?>">
+                    С контрактом ознакомлен(а)
                     <?php if (isset($errors['contract_accepted'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['contract_accepted']) ?></div>
+                        <div class="error-message"><?php echo htmlspecialchars($errors['contract_accepted']); ?></div>
                     <?php endif; ?>
-                </div>
+                </label><br>
 
-                <div class="form-group text-center">
-                    <button type="submit" name="save" class="btn btn-primary btn-lg">Сохранить</button>
-                </div>
+                <input type="submit" name="save" value="Сохранить" class="btn btn-primary">
             </form>
         </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+            
+            <?php if (!empty($_SESSION['login'])): ?>
+                <a href="logout.php" class="btn btn-danger ml-2">Выйти</a>
+            <?php endif; ?>
+        </form>
     </div>
 
-    <footer class="page-footer p-3 mt-3 w-100">
-        <div class="text-center">© Иванов Иван 2024</div>
+        <h1 id="important"></h1>
+    </div>
+    <footer class="page-footer p-3 mt-3">
+        <span>© Иванов Иван 2024</span>
     </footer>
-
-    <script>
-        // Валидация формы на стороне клиента
-        (function() {
-            'use strict';
-            window.addEventListener('load', function() {
-                var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (form.checkValidity() === false) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            }, false);
-        })();
-    </script>
 </body>
+
 </html>
