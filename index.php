@@ -1,72 +1,53 @@
 <?php
-// Получаем данные из cookies
+session_start();
+require 'db.php';
+
+$messages = [];
 $errors = [];
-$oldValues = [];
-$savedValues = [];
+$values = [];
 
-if (isset($_COOKIE['form_errors'])) {
-    $errors = json_decode($_COOKIE['form_errors'], true);
-    $oldValues = json_decode($_COOKIE['old_values'], true);
-}
-
-// Получаем сохраненные значения
-foreach ($_COOKIE as $name => $value) {
-    if (strpos($name, 'saved_') === 0) {
-        $field = substr($name, 6);
-        $savedValues[$field] = $value;
-    }
-}
-
-// Функция для получения значения поля
-function getFieldValue($field, $default = '') {
-    global $oldValues, $savedValues;
-    
-    if (isset($oldValues[$field])) {
-        return $oldValues[$field];
-    }
-    
-    if (isset($savedValues[$field])) {
-        return $savedValues[$field];
-    }
-    
-    return $default;
-}
-
-// Функция для проверки выбранного значения
-function isSelected($field, $value) {
-    global $oldValues, $savedValues;
-    
-    $currentValues = [];
-    if (isset($oldValues[$field])) {
-        if ($field === 'languages') {
-            $currentValues = explode(',', $oldValues[$field]);
-        } else {
-            return $oldValues[$field] === $value ? 'checked' : '';
-        }
-    } elseif (isset($savedValues[$field])) {
-        if ($field === 'languages') {
-            $currentValues = explode(',', $savedValues[$field]);
-        } else {
-            return $savedValues[$field] === $value ? 'checked' : '';
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if (!empty($_COOKIE['save'])) {
+        setcookie('save', '', time() - 3600);
+        $messages[] = 'Спасибо, результаты сохранены.';
+        
+        if (!empty($_COOKIE['login']) && !empty($_COOKIE['pass'])) {
+            $messages[] = sprintf(
+                'Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong> и паролем <strong>%s</strong> для изменения данных.',
+                htmlspecialchars($_COOKIE['login']),
+                htmlspecialchars($_COOKIE['pass'])
+            );
         }
     }
-    
-    return in_array($value, $currentValues) ? 'selected' : '';
-}
 
-// Функция для проверки чекбокса
-function isChecked($field) {
-    global $oldValues, $savedValues;
-    
-    if (isset($oldValues[$field])) {
-        return $oldValues[$field] ? 'checked' : '';
+    $field_names = ['name', 'phone', 'email', 'birthdate', 'gender', 'languages', 'bio', 'contract_accepted'];
+    foreach ($field_names as $field) {
+        $errors[$field] = !empty($_COOKIE[$field.'_error']) ? $_COOKIE[$field.'_error'] : '';
+        if (!empty($errors[$field])) {
+            setcookie($field.'_error', '', time() - 3600);
+        }
+        $values[$field] = empty($_COOKIE[$field.'_value']) ? '' : $_COOKIE[$field.'_value'];
     }
-    
-    if (isset($savedValues[$field])) {
-        return $savedValues[$field] ? 'checked' : '';
+
+    if (!empty($_SESSION['login'])) {
+        try {
+            $stmt = $pdo->prepare("SELECT a.*, GROUP_CONCAT(l.name) as languages 
+                FROM applications a
+                LEFT JOIN application_languages al ON a.id = al.application_id
+                LEFT JOIN languages l ON al.language_id = l.id
+                WHERE a.login = ? 
+                GROUP BY a.id");
+            $stmt->execute([$_SESSION['login']]);
+            $user_data = $stmt->fetch();
+            
+            if ($user_data) {
+                $values = array_merge($values, $user_data);
+                $values['languages'] = $user_data['languages'] ? explode(',', $user_data['languages']) : [];
+            }
+        } catch (PDOException $e) {
+            $messages[] = '<div class="alert alert-danger">Ошибка загрузки данных: '.htmlspecialchars($e->getMessage()).'</div>';
+        }
     }
-    
-    return '';
 }
 ?>
 
