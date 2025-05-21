@@ -31,6 +31,18 @@ nav.menu {
     padding: 10px 0;
 }
 
+.move a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.move a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 div.hiper, div.forma, div.tabl, .login-container {
     width: 100%;
     max-width: 960px;
