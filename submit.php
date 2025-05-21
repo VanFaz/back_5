@@ -1,35 +1,40 @@
 <?php
-// Устанавливаем соединение с базой данных
-$host = 'localhost';
-$dbname = 'u68683';
-$username = 'u68683';
-$password = '4171583';
-$dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
+session_start();
+require 'db.php';
 
-try {
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Ошибка подключения к БД: " . $e->getMessage());
-}
-
-// Обработка POST-запроса
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $errors = [];
-    $oldValues = [];
-    
-    // Правила валидации для каждого поля
-    $validationRules = [
+    // Проверка существования таблицы applications с нужными полями
+    try {
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS applications (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                login VARCHAR(50) UNIQUE,
+                pass_hash VARCHAR(255),
+                name VARCHAR(150) NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                birthdate DATE NOT NULL,
+                gender ENUM('male','female') NOT NULL,
+                bio TEXT,
+                contract_accepted BOOLEAN NOT NULL DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB
+        ");
+    } catch (PDOException $e) {
+        die("Ошибка создания таблицы: " . $e->getMessage());
+    }
+
+    $validation_rules = [
         'name' => [
             'pattern' => '/^[a-zA-Zа-яА-ЯёЁ\s]{1,150}$/u',
             'message' => 'ФИО должно содержать только буквы и пробелы (макс. 150 символов)'
         ],
         'phone' => [
-            'pattern' => '/^\+?\d{1,3}[-\s]?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$/',
-            'message' => 'Телефон должен быть в формате +7 (XXX) XXX-XX-XX'
+            'pattern' => '/^\+?\d[\d\s\-\(\)]{6,}\d$/',
+            'message' => 'Неверный формат телефона'
         ],
         'email' => [
-            'pattern' => '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+            'pattern' => '/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i',
             'message' => 'Введите корректный email'
         ],
         'birthdate' => [
@@ -37,15 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'message' => 'Дата должна быть в формате ГГГГ-ММ-ДД'
         ],
         'gender' => [
-            'pattern' => '/^(male|female|other)$/',
+            'pattern' => '/^(male|female)$/',
             'message' => 'Выберите пол из предложенных вариантов'
         ],
         'languages' => [
-            'pattern' => '/^(Pascal|C|C\+\+|JavaScript|PHP|Python|Java|Haskell|Clojure|Prolog|Scala)(,(Pascal|C|C\+\+|JavaScript|PHP|Python|Java|Haskell|Clojure|Prolog|Scala))*$/',
             'message' => 'Выберите хотя бы один язык программирования'
         ],
         'bio' => [
-            'pattern' => '/^.{10,2000}$/s',
+            'pattern' => '/^[\s\S]{10,2000}$/',
             'message' => 'Биография должна содержать от 10 до 2000 символов'
         ],
         'contract_accepted' => [
@@ -54,85 +58,100 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ]
     ];
 
-    // Валидация данных и сохранение старых значений
-    foreach ($validationRules as $field => $rule) {
+    $errors = [];
+    $data = [];
+    
+    foreach ($validation_rules as $field => $rule) {
+        if ($field === 'languages') {
+            if (empty($_POST['languages'])) {
+                $errors[$field] = $rule['message'];
+                setcookie($field.'_error', $rule['message'], time() + 24 * 60 * 60);
+            } else {
+                $data[$field] = $_POST['languages'];
+            }
+            continue;
+        }
+        
         $value = $_POST[$field] ?? '';
         
-        if ($field === 'languages') {
-            $value = implode(',', $_POST['languages'] ?? []);
-        } elseif ($field === 'contract_accepted') {
-            $value = isset($_POST['contract_accepted']) ? '1' : '';
+        if ($field === 'contract_accepted') {
+            $value = isset($_POST['contract_accepted']) ? '1' : '0';
         }
         
-        $oldValues[$field] = $value;
+        $data[$field] = $value;
         
-        if (!preg_match($rule['pattern'], $value)) {
+        if ($field !== 'languages' && !preg_match($rule['pattern'], $value)) {
             $errors[$field] = $rule['message'];
+            setcookie($field.'_error', $rule['message'], time() + 24 * 60 * 60);
+        } else {
+            setcookie($field.'_value', $value, time() + 30 * 24 * 60 * 60);
         }
     }
 
-    // Дополнительная проверка даты рождения
-    if (empty($errors['birthdate'])) {
-        $birthdate = DateTime::createFromFormat('Y-m-d', $_POST['birthdate']);
-        $today = new DateTime();
-        if ($birthdate > $today) {
-            $errors['birthdate'] = 'Дата рождения не может быть в будущем';
-        }
-    }
-
-    // Если есть ошибки - сохраняем в cookies и перенаправляем
     if (!empty($errors)) {
-        setcookie('form_errors', json_encode($errors), 0, '/');
-        setcookie('old_values', json_encode($oldValues), 0, '/');
+        setcookie('form_errors', json_encode($errors), time() + 24 * 60 * 60, '/');
         header('Location: index.php');
-        exit;
+        exit();
     }
 
-    // Если ошибок нет - сохраняем в БД
     try {
-        $pdo->beginTransaction();
-        
-        // Сохраняем основную информацию
-        $stmt = $pdo->prepare("INSERT INTO applications (name, phone, email, birthdate, gender, bio, contract_accepted) 
-                              VALUES (:name, :phone, :email, :birthdate, :gender, :bio, :contract)");
-        $stmt->execute([
-            ':name' => $_POST['name'],
-            ':phone' => $_POST['phone'],
-            ':email' => $_POST['email'],
-            ':birthdate' => $_POST['birthdate'],
-            ':gender' => $_POST['gender'],
-            ':bio' => $_POST['bio'],
-            ':contract' => isset($_POST['contract_accepted']) ? 1 : 0
-        ]);
-        
-        $applicationId = $pdo->lastInsertId();
-        
-        // Сохраняем языки программирования
-        if (!empty($_POST['languages'])) {
-            $stmt = $pdo->prepare("INSERT INTO application_languages (application_id, language_id) 
-                                  SELECT ?, id FROM languages WHERE name = ?");
-            foreach ($_POST['languages'] as $lang) {
-                $stmt->execute([$applicationId, $lang]);
-            }
+        // Подготовка данных для сохранения
+        $db_data = [
+            'name' => $data['name'],
+            'phone' => $data['phone'],
+            'email' => $data['email'],
+            'birthdate' => $data['birthdate'],
+            'gender' => $data['gender'],
+            'bio' => $data['bio'],
+            'contract_accepted' => $data['contract_accepted']
+        ];
+
+        if (!empty($_SESSION['login'])) {
+            // Обновление существующей записи
+            $db_data['id'] = $_SESSION['uid'];
+            $stmt = $pdo->prepare("UPDATE applications SET 
+                name = :name, phone = :phone, email = :email, 
+                birthdate = :birthdate, gender = :gender, 
+                bio = :bio, contract_accepted = :contract_accepted 
+                WHERE id = :id");
+            $stmt->execute($db_data);
+            
+            // Удаляем старые языки
+            $pdo->prepare("DELETE FROM application_languages WHERE application_id = ?")
+                ->execute([$_SESSION['uid']]);
+        } else {
+            // Создание новой записи
+            $login = uniqid('user_');
+            $pass = bin2hex(random_bytes(4));
+            $pass_hash = password_hash($pass, PASSWORD_DEFAULT);
+            
+            $db_data['login'] = $login;
+            $db_data['pass_hash'] = $pass_hash;
+            
+            $stmt = $pdo->prepare("INSERT INTO applications 
+                (name, phone, email, birthdate, gender, bio, contract_accepted, login, pass_hash) 
+                VALUES (:name, :phone, :email, :birthdate, :gender, :bio, :contract_accepted, :login, :pass_hash)");
+            $stmt->execute($db_data);
+            $app_id = $pdo->lastInsertId();
+            
+            setcookie('login', $login, time() + 24 * 60 * 60);
+            setcookie('pass', $pass, time() + 24 * 60 * 60);
         }
         
-        $pdo->commit();
+        // Добавляем выбранные языки
+        $app_id = $_SESSION['uid'] ?? $app_id;
+        $lang_stmt = $pdo->prepare("INSERT INTO application_languages (application_id, language_id) 
+            SELECT ?, id FROM languages WHERE name = ?");
         
-        // Сохраняем значения в cookies на год
-        foreach ($oldValues as $field => $value) {
-            setcookie("saved_$field", $value, time() + 60*60*24*365, '/');
+        foreach ($data['languages'] as $lang) {
+            $lang_stmt->execute([$app_id, $lang]);
         }
         
-        // Удаляем cookies с ошибками
-        setcookie('form_errors', '', time() - 3600, '/');
-        setcookie('old_values', '', time() - 3600, '/');
-        
+        setcookie('save', '1', time() + 24 * 60 * 60);
         header('Location: index.php?success=1');
-        exit;
-        
+        exit();
     } catch (PDOException $e) {
-        $pdo->rollBack();
-        die("Ошибка при сохранении данных: " . $e->getMessage());
+        die("Ошибка сохранения данных: " . $e->getMessage());
     }
 }
 ?>
