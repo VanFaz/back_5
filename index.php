@@ -65,6 +65,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Иванов Иван 4 задание</title>
       <link href="style.css" rel="stylesheet" type="text/css">
+      <style>
+        .error-field {
+            border: 1px solid #dc3545 !important;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+        .error-list {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        .success-message {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+    </style>
   </head>
 
   <body class="d-flex flex-column align-items-center">
@@ -74,24 +100,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             <img src="image.jpg" alt="Логотип сайта" id="logo" class="img-fluid" style="max-width: 150px;">
             <h1 class="h3">WINTER ARC</h1>
         </div>
-        </div>
-        <nav class="menu bg-dark py-3">
-            <div class="container">
-                <ul class="nav justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#section2">Ссылочка 1</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#section3">Ссылочка 2</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#section4">Ссылочка 3</a>
-                    </li>
-                </ul>
-            </div>
+        <nav class="menu mt-1 mt-md-0 p-2 col-auto d-flex flex-column flex-md-row align-items-center">
+            <div class="move mx-2"><a href="#hiper">Список гиперссылок</a></div>
+            <div class="move mx-2"><a href="#tabl">Таблица</a></div>
+            <div class="move mx-2"><a href="#forma">Форма</a></div>
+            <?php if (!empty($_SESSION['login'])): ?>
+                <div class="move mx-2"><a href="logout.php">Выйти</a></div>
+            <?php else: ?>
+                <div class="move mx-2"><a href="login.php">Войти</a></div>
+            <?php endif; ?>
         </nav>
-    
-</header>
+        </div>
+    </header>
 
     <div class="content d-flex flex-column">
         <div class="hiper m-2 p-2 m-md-3" id="hiper">
@@ -222,118 +242,119 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             
             <form action="submit.php" method="POST">
                 <!-- ФИО -->
-                <label for="name">
-                    ФИО:<br>
-                    <input id="name" name="name" placeholder="Иванов Иван Иванович" required
-                           value="<?php echo htmlspecialchars(getFieldValue('name')); ?>"
-                           class="<?php echo isset($errors['name']) ? 'error-field' : ''; ?>">
-                    <?php if (isset($errors['name'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['name']); ?></div>
+                <div class="form-group">
+                    <label for="name">ФИО:</label>
+                    <input type="text" class="form-control <?php echo !empty($errors['name']) ? 'is-invalid' : ''; ?>" 
+                           id="name" name="name" placeholder="Иванов Иван Иванович" required
+                           value="<?php echo htmlspecialchars($values['name'] ?? ''); ?>">
+                    <?php if (!empty($errors['name'])): ?>
+                        <div class="invalid-feedback"><?php echo htmlspecialchars($errors['name']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
                 
                 <!-- Телефон -->
-                <label for="phone">
-                    Телефон:<br>
-                    <input id="phone" type="tel" name="phone" placeholder="+7 (918) 123-45-67" required
-                           value="<?php echo htmlspecialchars(getFieldValue('phone')); ?>"
-                           class="<?php echo isset($errors['phone']) ? 'error-field' : ''; ?>">
-                    <?php if (isset($errors['phone'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['phone']); ?></div>
+                <div class="form-group">
+                    <label for="phone">Телефон:</label>
+                    <input type="tel" class="form-control <?php echo !empty($errors['phone']) ? 'is-invalid' : ''; ?>" 
+                           id="phone" name="phone" placeholder="+7 (918) 123-45-67" required
+                           value="<?php echo htmlspecialchars($values['phone'] ?? ''); ?>">
+                    <?php if (!empty($errors['phone'])): ?>
+                        <div class="invalid-feedback"><?php echo htmlspecialchars($errors['phone']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
                 
                 <!-- Email -->
-                <label for="email">
-                    Электронная почта:<br>
-                    <input id="email" name="email" type="email" placeholder="ogurec@example.com" required
-                           value="<?php echo htmlspecialchars(getFieldValue('email')); ?>"
-                           class="<?php echo isset($errors['email']) ? 'error-field' : ''; ?>">
-                    <?php if (isset($errors['email'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['email']); ?></div>
+                <div class="form-group">
+                    <label for="email">Электронная почта:</label>
+                    <input type="email" class="form-control <?php echo !empty($errors['email']) ? 'is-invalid' : ''; ?>" 
+                           id="email" name="email" placeholder="ogurec@example.com" required
+                           value="<?php echo htmlspecialchars($values['email'] ?? ''); ?>">
+                    <?php if (!empty($errors['email'])): ?>
+                        <div class="invalid-feedback"><?php echo htmlspecialchars($errors['email']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
                 
                 <!-- Дата рождения -->
-                <label for="birthdate">
-                    Дата рождения:<br>
-                    <input id="birthdate" name="birthdate" type="date" required
-                           value="<?php echo htmlspecialchars(getFieldValue('birthdate')); ?>"
-                           class="<?php echo isset($errors['birthdate']) ? 'error-field' : ''; ?>">
-                    <?php if (isset($errors['birthdate'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['birthdate']); ?></div>
+                <div class="form-group">
+                    <label for="birthdate">Дата рождения:</label>
+                    <input type="date" class="form-control <?php echo !empty($errors['birthdate']) ? 'is-invalid' : ''; ?>" 
+                           id="birthdate" name="birthdate" required
+                           value="<?php echo htmlspecialchars($values['birthdate'] ?? ''); ?>">
+                    <?php if (!empty($errors['birthdate'])): ?>
+                        <div class="invalid-feedback"><?php echo htmlspecialchars($errors['birthdate']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
 
                 <!-- Пол -->
-                <div>
-                    Выберите пол:<br>
-                    <label for="male">
-                        <input id="male" type="radio" name="gender" value="male" required
-                               <?php echo isSelected('gender', 'male'); ?>
-                               class="<?php echo isset($errors['gender']) ? 'error-field' : ''; ?>"> Мужской
-                    </label><br>
-                    <label for="female">
-                        <input id="female" type="radio" name="gender" value="female"
-                               <?php echo isSelected('gender', 'female'); ?>
-                               class="<?php echo isset($errors['gender']) ? 'error-field' : ''; ?>"> Женский
-                    </label><br>
-                    <?php if (isset($errors['gender'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['gender']); ?></div>
+                <div class="form-group">
+                    <label>Пол:</label>
+                    <div class="form-check">
+                        <input class="form-check-input <?php echo !empty($errors['gender']) ? 'is-invalid' : ''; ?>" 
+                               type="radio" name="gender" id="male" value="male" required
+                               <?php echo ($values['gender'] ?? '') === 'male' ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="male">Мужской</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input <?php echo !empty($errors['gender']) ? 'is-invalid' : ''; ?>" 
+                               type="radio" name="gender" id="female" value="female"
+                               <?php echo ($values['gender'] ?? '') === 'female' ? 'checked' : ''; ?>>
+                        <label class="form-check-label" for="female">Женский</label>
+                    </div>
+                    <?php if (!empty($errors['gender'])): ?>
+                        <div class="invalid-feedback d-block"><?php echo htmlspecialchars($errors['gender']); ?></div>
                     <?php endif; ?>
-                </div><br>
+                </div>
 
                 <!-- Языки программирования -->
-                <label for="languages">
-                    Любимый язык программирования:<br>
-                    <select id="languages" name="languages[]" multiple="multiple" required
-                            class="<?php echo isset($errors['languages']) ? 'error-field' : ''; ?>" size="5">
+                <div class="form-group">
+                    <label for="languages">Любимый язык программирования:</label>
+                    <select class="form-control <?php echo !empty($errors['languages']) ? 'is-invalid' : ''; ?>" 
+                            id="languages" name="languages[]" multiple="multiple" required size="5">
                         <?php 
                         $allLanguages = ['Pascal', 'C', 'C++', 'JavaScript', 'PHP', 'Python', 'Java', 'Haskell', 'Clojure', 'Prolog', 'Scala'];
+                        $selectedLanguages = isset($values['languages']) ? (is_array($values['languages']) ? $values['languages'] : explode(',', $values['languages'])) : [];
+                        
                         foreach ($allLanguages as $lang): ?>
-                            <option value="<?php echo htmlspecialchars($lang); ?>"
-                                <?php echo isSelected('languages', $lang); ?>>
+                            <option value="<?php echo htmlspecialchars($lang); ?>" 
+                                <?php echo in_array($lang, $selectedLanguages) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($lang); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <?php if (isset($errors['languages'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['languages']); ?></div>
+                    <?php if (!empty($errors['languages'])): ?>
+                        <div class="invalid-feedback d-block"><?php echo htmlspecialchars($errors['languages']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
 
                 <!-- Биография -->
-                <label for="bio">
-                    Биография:<br>
-                    <textarea id="bio" name="bio" placeholder="Ваша биография" required
-                              class="<?php echo isset($errors['bio']) ? 'error-field' : ''; ?>"><?php 
-                              echo htmlspecialchars(getFieldValue('bio')); ?></textarea>
-                    <?php if (isset($errors['bio'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['bio']); ?></div>
+                <div class="form-group">
+                    <label for="bio">Биография:</label>
+                    <textarea class="form-control <?php echo !empty($errors['bio']) ? 'is-invalid' : ''; ?>" 
+                              id="bio" name="bio" required rows="5"><?php 
+                              echo htmlspecialchars($values['bio'] ?? ''); ?></textarea>
+                    <?php if (!empty($errors['bio'])): ?>
+                        <div class="invalid-feedback"><?php echo htmlspecialchars($errors['bio']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
 
                 <!-- Чекбокс контракта -->
-                <label for="contract_accepted">
-                    <input id="contract_accepted" type="checkbox" name="contract_accepted" value="1" required
-                           <?php echo isChecked('contract_accepted'); ?>
-                           class="<?php echo isset($errors['contract_accepted']) ? 'error-field' : ''; ?>">
-                    С контрактом ознакомлен(а)
-                    <?php if (isset($errors['contract_accepted'])): ?>
-                        <div class="error-message"><?php echo htmlspecialchars($errors['contract_accepted']); ?></div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input <?php echo !empty($errors['contract_accepted']) ? 'is-invalid' : ''; ?>" 
+                           id="contract_accepted" name="contract_accepted" value="1" required
+                           <?php echo ($values['contract_accepted'] ?? '') ? 'checked' : ''; ?>>
+                    <label class="form-check-label" for="contract_accepted">С контрактом ознакомлен(а)</label>
+                    <?php if (!empty($errors['contract_accepted'])): ?>
+                        <div class="invalid-feedback d-block"><?php echo htmlspecialchars($errors['contract_accepted']); ?></div>
                     <?php endif; ?>
-                </label><br>
+                </div>
 
-                <input type="submit" name="save" value="Сохранить" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                
+                <?php if (!empty($_SESSION['login'])): ?>
+                    <a href="logout.php" class="btn btn-danger ml-2">Выйти</a>
+                <?php endif; ?>
             </form>
         </div>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-            
-            <?php if (!empty($_SESSION['login'])): ?>
-                <a href="logout.php" class="btn btn-danger ml-2">Выйти</a>
-            <?php endif; ?>
-        </form>
-    </div>
 
         <h1 id="important"></h1>
     </div>
@@ -341,5 +362,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         <span>© Иванов Иван 2024</span>
     </footer>
 </body>
-
 </html>
